@@ -1,6 +1,5 @@
 build:
-	mkdir -p build
-	clang main.c request.c request_utils.c -o build/httpc
+	clang main.c request.c request_utils.c url.c -o ./httpc
 
 run:
-	build/httpc
+	./httpc POST http://localhost:8080/auth/signup

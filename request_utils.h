@@ -1,9 +1,16 @@
+#ifndef REQUEST_H
+#define REQUEST_H
+
+#include "url.h"
+
 char* http_get_request(const char *path, const char *host);
 
 char* http_post_request(const char *path, const char *host, const char *body);
 
-char* http_put_request(const char *path, const char *host);
+char* http_put_request(const char *path, const char *host, const char *body);
 
-char* http_remove_request(const char *path, const char *host);
+char* http_delete_request(const char *path, const char *host, const char *body);
 
-int create_tcp_connection(const char *host, struct addrinfo **res, int *socketfd);
+int create_tcp_connection(struct UrlParts, struct addrinfo **res, int *socketfd);
+
+#endif

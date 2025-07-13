@@ -5,6 +5,7 @@
 #include <sys/socket.h>     // socket(), connect(), send(), recv()
 #include <netdb.h>          // getaddrinfo(), struct addrinfo
 #include "request_utils.h"
+#include "url.h"
 
 char* http_get_request(const char *path, const char *host){
     char* request = malloc(1024);
@@ -25,7 +26,7 @@ char* http_post_request(const char *path, const char *host, const char *body) {
     const char *content_type = "application/json";
     int body_len = strlen(body);
     
-    char *request = malloc(2048); // Adjust size as needed
+    char *request = malloc(2048);
     if (!request) return NULL;
 
     snprintf(
@@ -48,17 +49,69 @@ char* http_post_request(const char *path, const char *host, const char *body) {
     return request;
 }
 
-char* http_put_request(const char *path, const char *host);
+char* http_put_request(const char *path, const char *host, const char *body) {
+    const char *content_type = "application/json";
+    int body_len = strlen(body);
+    
+    char *request = malloc(2048);
+    if (!request) return NULL;
 
-char* http_delete_request(const char *path, const char *host);
+    snprintf(
+        request,
+        2048,
+        "PUT %s HTTP/1.1\r\n"
+        "Host: %s\r\n"
+        "Content-Type: %s\r\n"
+        "Content-Length: %d\r\n"
+        "Connection: close\r\n"
+        "\r\n"
+        "%s",
+        path,
+        host,
+        content_type,
+        body_len,
+        body
+    );
 
-int create_tcp_connection(const char *host, struct addrinfo **res, int *socketfd){
+    return request;
+}
+
+char* http_delete_request(const char *path, const char *host, const char *body) {
+    const char *content_type = "application/json";
+    int body_len = strlen(body);
+    
+    char *request = malloc(2048);
+    if (!request) return NULL;
+
+    snprintf(
+        request,
+        2048,
+        "DELETE %s HTTP/1.1\r\n"
+        "Host: %s\r\n"
+        "Content-Type: %s\r\n"
+        "Content-Length: %d\r\n"
+        "Connection: close\r\n"
+        "\r\n"
+        "%s",
+        path,
+        host,
+        content_type,
+        body_len,
+        body
+    );
+
+    return request;
+}
+
+int create_tcp_connection(struct UrlParts url_parts, struct addrinfo **res, int *socketfd){
     struct addrinfo hints;
     memset(&hints, 0, sizeof hints);
     hints.ai_family = AF_UNSPEC;      // AF_INET or AF_INET6
     hints.ai_socktype = SOCK_STREAM;  // TCP
 
-    int addrinfoerr = getaddrinfo(host, "8080", &hints, res);
+    // TODO: handle https with url_parts.scheme
+    
+    int addrinfoerr = getaddrinfo(url_parts.host, url_parts.port, &hints, res);
     if (addrinfoerr != 0) {
         fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(addrinfoerr));
         return 1;
