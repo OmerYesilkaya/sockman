@@ -1,5 +1,6 @@
 build:
-	clang main.c request.c request_utils.c -o httpc
+	mkdir -p build
+	clang main.c request.c request_utils.c -o build/httpc
 
 run:
-	./httpc
+	build/httpc
