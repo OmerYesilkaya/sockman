@@ -1,0 +1,7 @@
+{
+    "clang-format.executable": "/opt/homebrew/bin/clang-format",
+    "editor.formatOnSave": true,
+    "[c]": {
+        "editor.defaultFormatter": "xaver.clang-format"
+    }
+}
